@@ -1,7 +1,7 @@
 import { Calendar } from '@/components/Calendar'
 import { QuoteTable } from '@/components/QuoteTable'
 import { reserve } from '@/app/actions'
-import { windowOpen } from '@/lib/bookings'
+import { ensureBookings, windowOpen } from '@/lib/bookings'
 import { formatDate, isoFromOffset, offsetFromIso } from '@/lib/dates'
 import { money } from '@/lib/money'
 import { cancellationText, PHOTO_CREDIT, PHOTO_CREDIT_URL, propertyBySlug } from '@/lib/properties'
@@ -22,6 +22,7 @@ export default async function StayPage({
   const { slug } = await params
   const property = await propertyBySlug(slug)
   if (!property) notFound()
+  await ensureBookings()
   const raw = await searchParams
   const checkInIso = one(raw.checkIn) || isoFromOffset(21)
   const checkIn = offsetFromIso(checkInIso) ?? 21

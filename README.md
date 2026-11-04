@@ -32,11 +32,14 @@ Leo reads and changes stays through `/api/account/stays`. In his website install
 
 | Name | Method | Path |
 | --- | --- | --- |
+| `book_stay` | POST | `/stays` |
 | `list_stays` | GET | `/stays` |
 | `get_stay` | GET | `/stays/:id` |
 | `noon_checkout` | POST | `/stays/:id/noon-checkout` |
 | `extend_stay` | POST | `/stays/:id/extend` |
 | `cancel_stay` | POST | `/stays/:id/cancel` |
+
+`book_stay` takes JSON: `property` (the house name), `check_in` (`YYYY-MM-DD`), `nights`, `guests`, and `dogs`. It returns an approval link and does not reserve the house until the guest opens it. A guest who is logged in with changes allowed can also book by asking, for example "Book River Lookout, Nov 20 to 23, with a dog." When the number of guests is left out, the quote uses 2.
 
 ## Deploy on Vercel
 

@@ -312,6 +312,23 @@ async function mutate(id: string, account: string, change: (booking: Booking) =>
   return booking
 }
 
+export async function previewBook(input: {
+  property: string
+  checkInOffset: number
+  nights: number
+  guests: number
+  pets: boolean
+}) {
+  await ensureBookings()
+  const property = await propertyBySlug(input.property)
+  if (!property) return { error: 'That house is not in the catalog.' }
+  if (input.nights < 1) return { error: 'Say how many nights the stay is.' }
+  if (input.guests > property.sleeps) return { error: `${property.name} sleeps ${property.sleeps}.` }
+  if (input.pets && !property.dogs) return { error: `${property.name} does not allow dogs.` }
+  if (!windowOpen(property, input.checkInOffset, input.nights)) return { error: 'Those nights are already booked.' }
+  return { property, quote: quoteStay(property, input.nights, input.pets, false) }
+}
+
 export function createBooking(input: {
   account: string
   property: string

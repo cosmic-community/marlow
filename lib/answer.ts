@@ -1,14 +1,17 @@
 import type { AnswerInput, AnswerResult } from '@conciergeprotocol/server'
+import { bookFromMessage } from './booking-request'
 import {
   cancelStay,
+  createBooking,
   ensureBookings,
   extendStay,
+  previewBook,
   previewCancel,
   previewExtend,
   primaryStay,
   setLateCheckout,
 } from './bookings'
-import { formatDate, isoFromOffset } from './dates'
+import { formatDate, isoFromOffset, offsetFromIso } from './dates'
 import { ensureGuests, guestById, verifyGuest } from './guests'
 import { askLeo } from './leo'
 import { money, wordNumber } from './money'
@@ -39,6 +42,7 @@ function intent(message: string) {
   if (/\barrival\b/.test(text) && /\b(my|i)\b/.test(text)) return 'account'
   if (/\bcheck-?in\b/.test(text) && /\bmy\b/.test(text)) return 'account'
   if (/\b(lockbox|arrival code|door code)\b/.test(text)) return 'account'
+  if (bookFromMessage(message)) return 'book'
   return 'search'
 }
 
@@ -160,6 +164,28 @@ export async function answer({ message, history, account, scope }: AnswerInput):
 
   if (kind === 'account') return { reply: await stayReply(account as string) }
 
+  if (kind === 'book') {
+    if (scope !== 'write') return writeRequired
+    const request = bookFromMessage(message)
+    if (!request) return { reply: 'Name the house and the nights, such as River Lookout, Nov 20 to 23.' }
+    if ('error' in request) return { reply: request.error }
+    const preview = await previewBook(request.input)
+    if ('error' in preview && preview.error) return { reply: preview.error }
+    if (!preview.property || !preview.quote) return { reply: 'That house is not available.' }
+    const { property, quote } = preview
+    const { checkInOffset, nights, guests, pets, guestsAssumed } = request.input
+    const dog = pets ? ', with a dog' : ''
+    const assumed = guestsAssumed ? ' I counted 2 guests because the request did not say.' : ''
+    const stay = `${property.name}, ${formatDate(checkInOffset)} to ${formatDate(checkInOffset + nights)}, ${guests} guests${dog}`
+    return {
+      reply: `Book ${stay}. The total is ${money(quote.total)}: ${money(quote.lodging)} lodging, ${money(quote.cleaning)} cleaning${quote.pet ? `, ${money(quote.pet)} pet` : ''}, ${money(quote.service)} service, ${money(quote.tax)} tax.${assumed} This does not happen until you approve it.`,
+      confirm: {
+        summary: `Book ${stay}. Total ${money(quote.total)}.`,
+        authorization_details: [{ type: 'create_booking', property: property.slug, check_in: isoFromOffset(checkInOffset), nights, guests, pets }],
+      },
+    }
+  }
+
   const texts = [...history.map((turn) => turn.message), message]
   if (isStaySearch(message)) return { reply: await searchReply(texts) }
   const leo = await askLeo(history, message)
@@ -176,7 +202,25 @@ export async function act({
   caller: string
 }) {
   const details = Array.isArray(authorization_details) ? authorization_details : []
-  const action = details[0] as { type?: string; booking?: string } | undefined
+  const action = details[0] as { type?: string; booking?: string; property?: string; check_in?: string; nights?: number; guests?: number; pets?: boolean } | undefined
+  if (action?.type === 'create_booking') {
+    const checkInOffset = offsetFromIso(action.check_in || '')
+    if (checkInOffset == null || !action.property || !action.nights) return { error: { message: 'That booking is missing its dates.' } }
+    const result = await createBooking({
+      account,
+      property: action.property,
+      checkInOffset,
+      nights: action.nights,
+      guests: action.guests || 2,
+      pets: Boolean(action.pets),
+    })
+    if ('error' in result && result.error) return { error: { message: result.error } }
+    if (!result.booking) return { error: { message: 'That booking could not be saved.' } }
+    const property = await propertyBySlug(result.booking.property)
+    return {
+      message: `${property?.name || 'The house'} is booked, ${formatDate(result.booking.checkInOffset)} to ${formatDate(result.booking.checkInOffset + result.booking.nights)}. ${origin()}/trips/${result.booking.id}`,
+    }
+  }
   if (!action?.booking) return { error: { message: 'That change is not available.' } }
   if (action.type === 'cancel_booking') {
     const result = await cancelStay(account, action.booking)

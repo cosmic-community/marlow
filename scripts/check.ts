@@ -34,6 +34,8 @@ try {
   const { bookingById } = await import('../lib/bookings')
   const { propertyBySlug } = await import('../lib/properties')
   const { extraNight, quoteStay, refundFor } = await import('../lib/quote')
+  const { formatDate } = await import('../lib/dates')
+  const { bookingsFor } = await import('../lib/bookings')
 
   const open = await searchStays({
     checkIn: null,
@@ -139,6 +141,30 @@ try {
   const samCancel = await answer({ ...empty, message: 'Cancel my booking.', account: 'sam', scope: 'write' })
   const samConfirm = confirmOf(samCancel)
   if (!samConfirm || !samConfirm.summary.includes(samRefund.refund.toFixed(2))) fail('Sam cancel summary omitted the partial refund')
+
+  const stayStart = 40
+  const bookMessage = `Book River Lookout, ${formatDate(stayStart)} to ${formatDate(stayStart + 3)}, with a dog.`
+  const unsigned = await answer({ ...empty, message: bookMessage, account: null, scope: null })
+  if (typeof unsigned === 'string' || !('error' in unsigned) || unsigned.error.code !== 'login_required') fail('booking did not require login')
+
+  const noDogs = await answer({
+    ...empty,
+    message: `Book Hill Barn, ${formatDate(stayStart)} to ${formatDate(stayStart + 3)}, with a dog.`,
+    account: 'sam',
+    scope: 'write',
+  })
+  if (confirmOf(noDogs) || !replyOf(noDogs).includes('does not allow dogs')) fail('a dog was booked at Hill Barn')
+
+  const held = await answer({ ...empty, message: bookMessage, account: 'sam', scope: 'write' })
+  const bookConfirm = confirmOf(held)
+  if (!bookConfirm || !bookConfirm.summary.includes('River Lookout')) fail('booking did not ask for approval')
+  if (bookingsFor('sam').some((booking) => booking.property === 'river-lookout')) fail('booking was saved before approval')
+  const booked = await act({ account: 'sam', authorization_details: bookConfirm.authorization_details, caller })
+  if (!('message' in booked)) fail('approved booking did not complete')
+  const created = bookingsFor('sam').find((booking) => booking.property === 'river-lookout')
+  if (!created || created.nights !== 3 || !created.pets || created.guests !== 2) fail('booked stay was not saved for 2 guests and a dog')
+  const again = await answer({ ...empty, message: bookMessage, account: 'sam', scope: 'write' })
+  if (confirmOf(again) || !replyOf(again).includes('already booked')) fail('the same nights were offered twice')
 
   console.log('marlow check passed')
 } finally {

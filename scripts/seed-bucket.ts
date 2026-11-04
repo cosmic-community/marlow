@@ -16,6 +16,8 @@ const writeKey = envValue('COSMIC_WRITE_KEY')
 if (!slug || !readKey || !writeKey) throw new Error('The bucket slug, read key, and write key are required.')
 
 const api = `https://api.cosmicjs.com/v3/buckets/${slug}`
+const origin = (envValue('NEXT_PUBLIC_SITE_URL') || 'http://localhost:3220').replace(/\/$/, '')
+const housePage = (propertySlug: string) => `${origin}/stay/${propertySlug}`
 
 async function call(method: string, path: string, body?: unknown) {
   const response = await fetch(`${api}${path}`, {
@@ -157,7 +159,7 @@ function details(property: (typeof PROPERTIES)[number]) {
       ? `Noon checkout is $${property.lateCheckoutFee} when the next night is open.`
       : 'Noon checkout is not offered.',
     cancellationText(property.cancellation),
-    `House page: http://localhost:3220/stay/${property.slug}`,
+    `House page: ${housePage(property.slug)}`,
   ].join(' ')
 }
 
@@ -238,7 +240,7 @@ const guideRows = [...PROPERTIES]
       `${property.cancellation} cancellation`,
       `three nights $${threeNights(property, false)}`,
       property.dogs ? `with a dog $${threeNights(property, true)}` : '',
-      `http://localhost:3220/stay/${property.slug}`,
+      housePage(property.slug),
     ]
       .filter(Boolean)
       .join(', ')
@@ -328,13 +330,25 @@ for (const object of (propertyObjects?.objects || []) as { id: string; slug: str
   const arrival = String(metadata.arrival || '')
   const detailsText = String(metadata.details || '')
   const catalog = PROPERTIES.find((item) => item.slug === object.slug)
-  if (!arrival && !/code is \d+/.test(detailsText)) continue
+  const wanted = catalog ? details(catalog) : ''
+  const staleLink = Boolean(wanted) && detailsText !== wanted && /https?:\/\/\S+\/stay\//.test(detailsText)
+  if (!arrival && !/code is \d+/.test(detailsText) && !staleLink) continue
   const next: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(metadata)) next[key] = plain(value)
   next.arrival = ''
-  if (catalog && /code is \d+/.test(detailsText)) next.details = details(catalog)
+  if (wanted && (staleLink || /code is \d+/.test(detailsText))) next.details = wanted
   await call('PATCH', `/objects/${object.id}`, { metadata: next })
-  console.log(`cleared arrival on ${object.slug}`)
+  console.log(`updated ${object.slug}`)
+}
+
+const pageQuery = encodeURIComponent(JSON.stringify({ type: 'pages' }))
+const pageObjects = await read(`/objects?query=${pageQuery}&limit=100`)
+for (const object of (pageObjects?.objects || []) as { id: string; slug: string; metadata?: Record<string, unknown> }[]) {
+  const wanted = pages.find((page) => page.slug === object.slug)
+  const body = String(object.metadata?.body || '')
+  if (!wanted || body === wanted.metadata.body || !/https?:\/\/\S+\/stay\//.test(body)) continue
+  await call('PATCH', `/objects/${object.id}`, { metadata: { body: wanted.metadata.body } })
+  console.log(`updated page ${object.slug}`)
 }
 
 console.log(`bucket ${slug} is seeded`)

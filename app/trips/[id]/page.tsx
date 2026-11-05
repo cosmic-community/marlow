@@ -4,7 +4,7 @@ import { QuoteTable } from '@/components/QuoteTable'
 import { arrivalOn, bookingById, ensureBookings, windowOpen } from '@/lib/bookings'
 import { formatDate } from '@/lib/dates'
 import { money } from '@/lib/money'
-import { propertyBySlug } from '@/lib/properties'
+import { PHOTO_CREDIT, PHOTO_CREDIT_URL, propertyBySlug } from '@/lib/properties'
 import { extraNight, quoteStay, refundFor } from '@/lib/quote'
 import { currentGuest } from '@/lib/session'
 
@@ -45,6 +45,13 @@ export default async function TripPage({
   return (
     <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
       <div className="space-y-5">
+        <img src={property.photos[0]} alt={property.name} className="aspect-[16/10] w-full rounded-2xl object-cover" />
+        <p className="text-xs text-ink/50">
+          Photo:{' '}
+          <a className="underline" href={PHOTO_CREDIT_URL}>
+            {PHOTO_CREDIT}
+          </a>
+        </p>
         <p className="text-sm uppercase tracking-wide text-ink/60">{booking.status}</p>
         <h1 className="text-5xl">{property.name}</h1>
         <p>

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { CosmicBadge } from '@/components/CosmicBadge'
 import { LeoChat } from '@/components/LeoChat'
 import { SiteFooter, SiteHeader } from '@/components/Site'
 import './globals.css'
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         <main className="mx-auto max-w-6xl px-5 py-8">{children}</main>
         <SiteFooter />
+        <CosmicBadge />
         <LeoChat />
       </body>
     </html>

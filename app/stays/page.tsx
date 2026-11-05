@@ -40,12 +40,12 @@ export default async function StaysPage({
         values={{
           checkIn,
           nights: String(filters.nights),
-          guests: query.guests || '',
-          bedrooms: query.bedrooms || '',
+          guests: filters.guests != null ? String(filters.guests) : '',
+          bedrooms: filters.bedrooms != null ? String(filters.bedrooms) : '',
           hotTub: filters.hotTub,
           dogs: filters.dogs,
           freeCancellation: filters.freeCancellation,
-          maxTotal: query.maxTotal || '',
+          maxTotal: filters.maxTotal != null ? String(filters.maxTotal) : '',
         }}
       />
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

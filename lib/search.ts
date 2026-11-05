@@ -1,5 +1,6 @@
 import { ensureBookings, firstWindow, windowOpen } from './bookings'
-import { offsetFromIso } from './dates'
+import { offsetFromIso, startOfToday } from './dates'
+import { wordNumber } from './money'
 import { loadProperties, type Property } from './properties'
 import { quoteStay, type Quote } from './quote'
 
@@ -57,5 +58,82 @@ export function filtersFromQuery(query: Record<string, string | undefined>): Sea
     freeCancellation: query.freeCancellation === 'yes',
     maxTotal: Number.isFinite(maxTotal) && maxTotal > 0 ? maxTotal : null,
     town: query.town || null,
+  }
+}
+
+const TOWNS = ['healdsburg', 'guerneville', 'glen ellen', 'bodega bay', 'occidental', 'forestville']
+
+const MONTHS: Record<string, number> = {
+  jan: 0,
+  january: 0,
+  feb: 1,
+  february: 1,
+  mar: 2,
+  march: 2,
+  apr: 3,
+  april: 3,
+  may: 4,
+  jun: 5,
+  june: 5,
+  jul: 6,
+  july: 6,
+  aug: 7,
+  august: 7,
+  sep: 8,
+  sept: 8,
+  september: 8,
+  oct: 9,
+  october: 9,
+  nov: 10,
+  november: 10,
+  dec: 11,
+  december: 11,
+}
+
+const COUNT = '(\\d+|one|two|three|four|five|six|seven|eight)'
+
+function dateFromAsk(text: string) {
+  const match = text.match(
+    new RegExp(
+      `\\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\\.?\\s+(\\d{1,2})(?:\\s*(?:-|to)\\s*(\\d{1,2}))?`,
+      'i'
+    )
+  )
+  if (!match) return { checkIn: null as number | null, nights: null as number | null }
+  const month = MONTHS[match[1].toLowerCase()]
+  const day = Number(match[2])
+  const end = match[3] ? Number(match[3]) : null
+  if (month == null || day < 1 || day > 31) return { checkIn: null, nights: null }
+  const today = startOfToday()
+  let year = today.getFullYear()
+  if (new Date(year, month, day).getTime() < today.getTime()) year += 1
+  const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+  return {
+    checkIn: offsetFromIso(iso),
+    nights: end && end > day ? end - day : null,
+  }
+}
+
+// The same reading the agent uses for a public house question.
+export function filtersFromAsk(text: string): SearchFilters {
+  const lower = text.toLowerCase()
+  const guests =
+    lower.match(new RegExp(`${COUNT}\\s+(?:people|guests)`)) ||
+    lower.match(new RegExp(`\\bsleeps?\\s+${COUNT}`)) ||
+    lower.match(new RegExp(`\\bfor\\s+${COUNT}(?!\\s+nights?\\b)`))
+  const nights = lower.match(new RegExp(`${COUNT}\\s+nights?`))
+  const bedrooms = lower.match(new RegExp(`${COUNT}\\s+bedrooms?`))
+  const budget = lower.match(/under\s*\$?\s*([\d,]+)/)
+  const dated = dateFromAsk(lower)
+  return {
+    checkIn: dated.checkIn,
+    nights: (nights && wordNumber(nights[1])) || dated.nights || 3,
+    guests: guests ? wordNumber(guests[1]) : null,
+    bedrooms: bedrooms ? wordNumber(bedrooms[1]) : null,
+    hotTub: /hot tub/.test(lower),
+    dogs: /\bdogs?\b/.test(lower),
+    freeCancellation: /free cancellation/.test(lower),
+    maxTotal: budget ? wordNumber(budget[1]) : null,
+    town: TOWNS.find((name) => lower.includes(name)) || null,
   }
 }

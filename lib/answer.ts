@@ -14,10 +14,10 @@ import {
 import { formatDate, isoFromOffset, offsetFromIso } from './dates'
 import { ensureGuests, guestById, verifyGuest } from './guests'
 import { askLeo } from './leo'
-import { money, wordNumber } from './money'
+import { money } from './money'
 import { cancellationText, propertyBySlug } from './properties'
 import { quoteStay } from './quote'
-import { searchStays, type SearchFilters } from './search'
+import { filtersFromAsk, searchStays, type SearchFilters } from './search'
 import { accountFromCookieHeader } from './token'
 
 const origin = () => (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3220').replace(/\/$/, '')
@@ -51,26 +51,8 @@ function isStaySearch(message: string) {
   return /\b(people|guests|bedrooms?|hot tub|dogs?|nights?|under \$?\d|budget|free cancellation|which of those|which ones)\b/.test(text)
 }
 
-const TOWNS = ['healdsburg', 'guerneville', 'glen ellen', 'bodega bay', 'occidental', 'forestville']
-
 function filtersFrom(texts: string[]): SearchFilters {
-  const text = texts.join('\n').toLowerCase()
-  const guests = text.match(/(\d+|two|three|four|five|six|seven|eight)\s+(?:people|guests)/)
-  const nights = text.match(/(\d+|two|three|four|five|six|seven)\s+nights?/)
-  const bedrooms = text.match(/(\d+|one|two|three|four|five)\s+bedrooms?/)
-  const budget = text.match(/under\s*\$?\s*([\d,]+)/)
-  const town = TOWNS.find((name) => text.includes(name)) || null
-  return {
-    checkIn: null,
-    nights: (nights && wordNumber(nights[1])) || 3,
-    guests: guests ? wordNumber(guests[1]) : null,
-    bedrooms: bedrooms ? wordNumber(bedrooms[1]) : null,
-    hotTub: /hot tub/.test(text),
-    dogs: /\bdogs?\b/.test(text),
-    freeCancellation: /free cancellation/.test(text),
-    maxTotal: budget ? wordNumber(budget[1]) : null,
-    town,
-  }
+  return filtersFromAsk(texts.join('\n'))
 }
 
 function describe(filters: SearchFilters) {

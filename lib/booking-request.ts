@@ -99,7 +99,7 @@ export function bookFromBody(body: unknown): { input: BookInput } | { error: str
   const checkOut = offsetFromIso(String(raw.check_out || ''))
   const nights = Number(raw.nights) || (checkIn != null && checkOut != null ? checkOut - checkIn : 0)
   const guests = Number(raw.guests)
-  if (!house) return { error: 'Name the house, such as River Lookout.' }
+  if (!house) return { error: 'Name the home, such as River Lookout.' }
   if (checkIn == null || nights < 1) return { error: 'Send check_in as YYYY-MM-DD and nights as a number.' }
   return {
     input: {

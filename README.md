@@ -12,13 +12,13 @@ bun run check
 bun run dev
 ```
 
-Open http://localhost:3220. Ask Leo at http://localhost:3220/chat. `agent.txt` points CAP and OAuth at this site. Public house questions are sent to Leo. Account questions stay here and require a login.
+Open http://localhost:3220. Ask Leo at http://localhost:3220/chat. `agent.txt` points CAP and OAuth at this site. Public stay questions are sent to Leo. Account questions stay here and require a login.
 
 The chat only answers if this origin is on Leo's allowed websites. For local work that is `http://localhost:3220`.
 
 Demo guests: `maya` / `maya` and `sam` / `sam`. Maya is at Orchard House. Sam is at Cliff Kitchen. `bun run reset` puts both demo stays back to confirmed, without noon checkout or an extra night, in Cosmic and in the local `data/bookings.json` fallback. Dates are counted from the day they were saved.
 
-`bun run seed` writes the houses, the fee and cancellation pages, the two guests, their stays, and the `cap-records` type into the Cosmic bucket named by `COSMIC_BUCKET_SLUG`. Arrival instructions are stored on the stay, not on the public house. The site reads those houses when the read key is set, and uses the copy in the repo if the bucket cannot be reached.
+`bun run seed` writes the homes, the fee and cancellation pages, the two guests, their stays, and the `cap-records` type into the Cosmic bucket named by `COSMIC_BUCKET_SLUG`. Arrival instructions are stored on the stay, not on the public home. The site reads those homes when the read key is set, and uses the copy in the repo if the bucket cannot be reached.
 
 `bun run check` covers search, fees, and the guest portal. It does not call Leo.
 
@@ -39,7 +39,7 @@ Leo reads and changes stays through `/api/account/stays`. In his website install
 | `extend_stay` | POST | `/stays/:id/extend` |
 | `cancel_stay` | POST | `/stays/:id/cancel` |
 
-`book_stay` takes JSON: `property` (the house name), `check_in` (`YYYY-MM-DD`), `nights`, `guests`, and `dogs`. It returns an approval link and does not reserve the house until the guest opens it. A guest who is logged in with changes allowed can also book by asking, for example "Book River Lookout, Nov 20 to 23, with a dog." When the number of guests is left out, the quote uses 2.
+`book_stay` takes JSON: `property` (the home name), `check_in` (`YYYY-MM-DD`), `nights`, `guests`, and `dogs`. It returns an approval link and does not reserve the stay until the guest opens it. A guest who is logged in with changes allowed can also book by asking, for example "Book River Lookout, Nov 20 to 23, with a dog." When the number of guests is left out, the quote uses 2.
 
 ## Deploy on Vercel
 

@@ -159,7 +159,7 @@ function details(property: (typeof PROPERTIES)[number]) {
       ? `Noon checkout is $${property.lateCheckoutFee} when the next night is open.`
       : 'Noon checkout is not offered.',
     cancellationText(property.cancellation),
-    `House page: ${housePage(property.slug)}`,
+    `Home page: ${housePage(property.slug)}`,
   ].join(' ')
 }
 
@@ -209,7 +209,7 @@ const pages = [
     title: 'Fees',
     slug: 'fees',
     metadata: {
-      body: 'A stay total is the nightly rate times the nights, plus the cleaning fee. Dogs add the pet fee only when the house allows them. The service fee is 12% of lodging plus cleaning. Tax is 14% of lodging, cleaning, and the pet fee. Noon checkout, when the house offers it and the next night is open, is a separate fee. One extra night adds one night of lodging, service, and tax. Cleaning and the pet fee are not charged again.',
+      body: 'A stay total is the nightly rate times the nights, plus the cleaning fee. Dogs add the pet fee only when the home allows them. The service fee is 12% of lodging plus cleaning. Tax is 14% of lodging, cleaning, and the pet fee. Noon checkout, when the home offers it and the next night is open, is a separate fee. One extra night adds one night of lodging, service, and tax. Cleaning and the pet fee are not charged again.',
     },
   },
   {
@@ -247,12 +247,12 @@ const guideRows = [...PROPERTIES]
   )
 
 pages.push({
-  title: 'House guide',
+  title: 'Home guide',
   slug: 'house-guide',
   metadata: {
     body: [
-      'Every Marlow house is in Sonoma County. When a guest says Sonoma, they mean the whole county, not only the town of Sonoma. Check every house below against every requirement and list all that match, cheapest first.',
-      'Three-night totals include lodging, cleaning, the 12% service fee, and 14% tax. With a dog, the pet fee and its tax are added. Totals for other lengths follow the fees page. Open dates are on each house page.',
+      'Every Marlow home is in Sonoma County. When a guest says Sonoma, they mean the whole county, not only the town of Sonoma. Check every home below against every requirement and list all that match, cheapest first.',
+      'Three-night totals include lodging, cleaning, the 12% service fee, and 14% tax. With a dog, the pet fee and its tax are added. Totals for other lengths follow the fees page. Open dates are on each home page.',
       ...guideRows,
     ].join('\n'),
   },

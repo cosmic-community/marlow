@@ -79,14 +79,14 @@ async function searchReply(texts: string[]) {
     return `- ${match.property.name}, ${match.property.town}. Sleeps ${match.property.sleeps}. ${match.property.hotTub ? 'Hot tub. ' : ''}${match.property.dogs ? 'Dogs allowed. ' : 'No dogs. '}${cancellationText(match.property.cancellation)} ${formatDate(match.start)} to ${formatDate(match.start + match.nights)}, ${money(match.price.total)} total (${money(match.price.lodging)} lodging, ${money(match.price.cleaning)} cleaning${pet}, ${money(match.price.service)} service, ${money(match.price.tax)} tax). ${href}`
   })
   const more = matches.length > 8 ? ` ${matches.length - 8} more are open.` : ''
-  return `For ${describe(filters)} in Sonoma County, ${matches.length === 1 ? 'this house is open' : `these ${matches.length} houses are open`}.${more}\n${lines.join('\n')}`
+  return `For ${describe(filters)} in Sonoma County, ${matches.length === 1 ? 'this home is open' : `these ${matches.length} homes are open`}.${more}\n${lines.join('\n')}`
 }
 
 async function stayReply(account: string) {
   const booking = primaryStay(account)
   if (!booking) return 'There is no upcoming stay on this account.'
   const property = await propertyBySlug(booking.property)
-  if (!property) return 'That house is not in the catalog.'
+  if (!property) return 'That home is not in the catalog.'
   const guest = guestById(account)
   const quote = quoteStay(property, booking.nights, booking.pets, booking.lateCheckout)
   const late = booking.lateCheckout ? ` Noon checkout is on the stay, for ${money(property.lateCheckoutFee)}.` : ''
@@ -149,11 +149,11 @@ export async function answer({ message, history, account, scope }: AnswerInput):
   if (kind === 'book') {
     if (scope !== 'write') return writeRequired
     const request = bookFromMessage(message)
-    if (!request) return { reply: 'Name the house and the nights, such as River Lookout, Nov 20 to 23.' }
+    if (!request) return { reply: 'Name the home and the nights, such as River Lookout, Nov 20 to 23.' }
     if ('error' in request) return { reply: request.error }
     const preview = await previewBook(request.input)
     if ('error' in preview && preview.error) return { reply: preview.error }
-    if (!preview.property || !preview.quote) return { reply: 'That house is not available.' }
+    if (!preview.property || !preview.quote) return { reply: 'That home is not available.' }
     const { property, quote } = preview
     const { checkInOffset, nights, guests, pets, guestsAssumed } = request.input
     const dog = pets ? ', with a dog' : ''
@@ -200,7 +200,7 @@ export async function act({
     if (!result.booking) return { error: { message: 'That booking could not be saved.' } }
     const property = await propertyBySlug(result.booking.property)
     return {
-      message: `${property?.name || 'The house'} is booked, ${formatDate(result.booking.checkInOffset)} to ${formatDate(result.booking.checkInOffset + result.booking.nights)}. ${origin()}/trips/${result.booking.id}`,
+      message: `${property?.name || 'The stay'} is booked, ${formatDate(result.booking.checkInOffset)} to ${formatDate(result.booking.checkInOffset + result.booking.nights)}. ${origin()}/trips/${result.booking.id}`,
     }
   }
   if (!action?.booking) return { error: { message: 'That change is not available.' } }

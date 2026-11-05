@@ -16,7 +16,7 @@ export default function TestPage() {
           </a>{' '}
           and sends one message. It does not find that file on its own, so paste this site into the assistant.
         </p>
-        <p>The house pages are what a browsing assistant can read. Leo is the agent that answers through CAP.</p>
+        <p>The home pages are what a browsing assistant can read. Leo is the agent that answers through CAP.</p>
       </div>
       <section className="space-y-2">
         <h2 className="text-2xl">From the terminal</h2>

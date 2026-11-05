@@ -114,7 +114,7 @@ function dateFromAsk(text: string) {
   }
 }
 
-// The same reading the agent uses for a public house question.
+// The same reading the agent uses for a public stay question.
 export function filtersFromAsk(text: string): SearchFilters {
   const lower = text.toLowerCase()
   const guests =

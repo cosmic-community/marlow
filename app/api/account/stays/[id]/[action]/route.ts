@@ -16,7 +16,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const booking = await ownStay(access, id)
   if (!booking) return fail(404, 'not_found', 'That stay is not on this account.')
   const view = await stayView(booking)
-  if (!view) return fail(404, 'not_found', 'That house is not in the catalog.')
+  if (!view) return fail(404, 'not_found', 'That home is not in the catalog.')
 
   if (action === 'noon-checkout') {
     const result = await setLateCheckout(access.account, booking.id)

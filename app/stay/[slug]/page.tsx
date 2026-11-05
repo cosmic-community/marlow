@@ -44,7 +44,7 @@ export default async function StayPage({
           <a className="underline" href={PHOTO_CREDIT_URL}>
             {PHOTO_CREDIT}
           </a>
-          . It is a stock photograph, not a picture of this house.
+          . It is a stock photograph, not a picture of this home.
         </p>
         <ul className="grid gap-2 text-sm sm:grid-cols-2">
           <li>{property.bedrooms} bedrooms</li>

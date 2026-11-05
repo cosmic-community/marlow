@@ -4,7 +4,7 @@ export default function NotFound() {
       <h1 className="text-4xl">That page is not here</h1>
       <p>
         <a className="underline" href="/stays">
-          See the houses
+          See the stays
         </a>
       </p>
     </div>

@@ -30,7 +30,7 @@ export default async function StaysPage({
   return (
     <div className="space-y-8">
       <div className="space-y-3">
-        <h1 className="text-4xl">Houses</h1>
+        <h1 className="text-4xl">Stays</h1>
         <p className="text-ink/75">
           {matches.length === 0 ? 'Nothing is open for those dates and filters.' : `${matches.length} open.`} The total includes cleaning, a 12% service fee, and 14% tax.
           {filters.dogs ? ' The pet fee is included.' : ''}

@@ -321,7 +321,7 @@ export async function previewBook(input: {
 }) {
   await ensureBookings()
   const property = await propertyBySlug(input.property)
-  if (!property) return { error: 'That house is not in the catalog.' }
+  if (!property) return { error: 'That home is not in the catalog.' }
   if (input.nights < 1) return { error: 'Say how many nights the stay is.' }
   if (input.guests > property.sleeps) return { error: `${property.name} sleeps ${property.sleeps}.` }
   if (input.pets && !property.dogs) return { error: `${property.name} does not allow dogs.` }
@@ -340,7 +340,7 @@ export function createBooking(input: {
   return exclusive(async () => {
     await ensureBookings()
     const property = await propertyBySlug(input.property)
-    if (!property) return { error: 'That house is not in the catalog.' }
+    if (!property) return { error: 'That home is not in the catalog.' }
     if (input.guests > property.sleeps) return { error: `${property.name} sleeps ${property.sleeps}.` }
     if (input.pets && !property.dogs) return { error: `${property.name} does not allow dogs.` }
     if (!windowOpen(property, input.checkInOffset, input.nights)) return { error: 'Those nights are already booked.' }
@@ -371,7 +371,7 @@ export function setLateCheckout(account: string, id: string) {
     if (!current || current.account !== account) return { error: 'That stay was not found.' }
     if (current.status !== 'confirmed') return { error: 'That stay is cancelled.' }
     const property = await propertyBySlug(current.property)
-    if (!property) return { error: 'That house is not in the catalog.' }
+    if (!property) return { error: 'That home is not in the catalog.' }
     const checkout = current.checkInOffset + current.nights
     if (property.lateCheckout !== 'noon') {
       return { error: `${property.name} does not offer a noon checkout.` }
@@ -396,7 +396,7 @@ export function extendStay(account: string, id: string) {
     if (!current || current.account !== account) return { error: 'That stay was not found.' }
     if (current.status !== 'confirmed') return { error: 'That stay is cancelled.' }
     const property = await propertyBySlug(current.property)
-    if (!property) return { error: 'That house is not in the catalog.' }
+    if (!property) return { error: 'That home is not in the catalog.' }
     const checkout = current.checkInOffset + current.nights
     if (!windowOpen(property, checkout, 1, current.id)) {
       return { error: `${property.name} is booked the night after you leave, so the stay cannot be extended.` }
@@ -415,7 +415,7 @@ export function cancelStay(account: string, id: string) {
     const current = bookingById(id)
     if (!current || current.account !== account) return { error: 'That stay was not found.' }
     const property = await propertyBySlug(current.property)
-    if (!property) return { error: 'That house is not in the catalog.' }
+    if (!property) return { error: 'That home is not in the catalog.' }
     const quote = quoteStay(property, current.nights, current.pets, current.lateCheckout)
     const refund = refundFor(property, current.nights, current.pets, current.lateCheckout, current.checkInOffset)
     if (current.status === 'cancelled') return { booking: current, refund, property, quote }
@@ -433,7 +433,7 @@ export async function previewExtend(account: string) {
   const booking = primaryStay(account)
   if (!booking) return { error: 'There is no upcoming stay on this account.' }
   const property = await propertyBySlug(booking.property)
-  if (!property) return { error: 'That house is not in the catalog.' }
+  if (!property) return { error: 'That home is not in the catalog.' }
   const checkout = booking.checkInOffset + booking.nights
   if (!windowOpen(property, checkout, 1, booking.id)) {
     return { error: `${property.name} is booked the night after you leave, so the stay cannot be extended.`, booking, property }
@@ -446,7 +446,7 @@ export async function previewCancel(account: string) {
   const booking = primaryStay(account)
   if (!booking) return { error: 'There is no upcoming stay on this account.' }
   const property = await propertyBySlug(booking.property)
-  if (!property) return { error: 'That house is not in the catalog.' }
+  if (!property) return { error: 'That home is not in the catalog.' }
   const quote = quoteStay(property, booking.nights, booking.pets, booking.lateCheckout)
   const refund = refundFor(property, booking.nights, booking.pets, booking.lateCheckout, booking.checkInOffset)
   return { booking, property, quote, refund }

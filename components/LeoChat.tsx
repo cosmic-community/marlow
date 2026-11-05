@@ -19,7 +19,26 @@ export function LeoChat() {
     script.setAttribute('data-theme', 'light')
     if (inline) script.setAttribute('data-target', '#leo-chat')
     document.body.appendChild(script)
+
+    const paint = () => {
+      document.querySelectorAll('[data-cosmic-embed]').forEach((node) => {
+        const shadow = node.shadowRoot
+        if (!shadow || shadow.querySelector('[data-marlow-chat]')) return
+        const style = document.createElement('style')
+        style.setAttribute('data-marlow-chat', '')
+        style.textContent = [
+          'button,a,.text-btn,.icon-btn,.launcher{cursor:pointer}',
+          inline ? '.panel{border:0;box-shadow:none}' : '',
+        ].join('')
+        shadow.appendChild(style)
+      })
+    }
+    const observer = new MutationObserver(paint)
+    observer.observe(document.body, { childList: true, subtree: true })
+    paint()
+
     return () => {
+      observer.disconnect()
       script.remove()
       document.querySelectorAll('[data-cosmic-embed]').forEach((node) => node.remove())
     }

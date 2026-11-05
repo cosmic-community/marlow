@@ -16,7 +16,7 @@ export function ChatFrame() {
   }, [])
 
   return (
-    <div className="space-y-4">
+    <div className="max-w-xl space-y-4">
       <div className="max-w-2xl space-y-2">
         <h1 className="text-4xl">Ask Leo</h1>
         <p className="text-ink/75">
@@ -28,7 +28,7 @@ export function ChatFrame() {
           Leo refused this website. Add {origin || 'this origin'} to his allowed websites, then reload.
         </p>
       ) : null}
-      <div id="leo-chat" className="h-[min(40rem,calc(100svh-12rem))] overflow-hidden rounded-lg border border-line bg-card" />
+      <div id="leo-chat" className="h-[min(40rem,calc(100svh-12rem))] overflow-hidden" />
     </div>
   )
 }

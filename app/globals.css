@@ -27,6 +27,13 @@ a {
   color: inherit;
 }
 
+a[href],
+button:not(:disabled),
+summary,
+label:has(input, select, textarea) {
+  cursor: pointer;
+}
+
 ::selection {
   background: #f0d5dc;
 }

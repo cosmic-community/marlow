@@ -22,7 +22,7 @@ export function getDoor() {
   if (!shared.pending) {
     shared.pending = createCapHandler({
       agent: {
-        name: 'Leo, Customer Support Agent',
+        name: "Leo, Marlow's concierge",
         chat: `${origin()}/chat`,
       },
       answer,

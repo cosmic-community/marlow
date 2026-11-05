@@ -18,9 +18,11 @@ export async function SiteHeader() {
           <Link className="underline decoration-line underline-offset-4" href="/stays">
             Houses
           </Link>
-          <Link className="underline decoration-line underline-offset-4" href="/trips">
-            Your stays
-          </Link>
+          {guest ? (
+            <Link className="underline decoration-line underline-offset-4" href="/trips">
+              Your stays
+            </Link>
+          ) : null}
           <Link className="underline decoration-line underline-offset-4" href="/chat">
             Ask Leo
           </Link>

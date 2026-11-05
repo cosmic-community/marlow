@@ -16,8 +16,8 @@ export function ChatFrame() {
   }, [])
 
   return (
-    <div className="max-w-xl space-y-4">
-      <div className="max-w-2xl space-y-2">
+    <div className="mx-auto w-full max-w-[54rem] space-y-4">
+      <div className="space-y-2">
         <h1 className="text-4xl">Ask Leo</h1>
         <p className="text-ink/75">
           Leo is Marlow's concierge. The chat on this page and a request to the agent door are the same agent.

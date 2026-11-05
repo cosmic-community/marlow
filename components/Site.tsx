@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { signOut } from '@/app/actions'
 import { currentGuest } from '@/lib/session'
 import { ensureGuests, guestById } from '@/lib/guests'
 
@@ -20,14 +21,22 @@ export async function SiteHeader() {
           <Link className="underline decoration-line underline-offset-4" href="/trips">
             Your stays
           </Link>
-          <Link className="underline decoration-line underline-offset-4" href="/chat">
+          <Link className="inline-flex items-center gap-2 underline decoration-line underline-offset-4" href="/chat">
+            <img src="/leo.jpg" alt="" className="h-7 w-7 rounded-full object-cover" />
             Ask Leo
           </Link>
           <Link className="underline decoration-line underline-offset-4" href="/test">
             Agent door
           </Link>
           {guest ? (
-            <span className="text-ink/70">{guest.name}</span>
+            <>
+              <span className="text-ink/70">{guest.name}</span>
+              <form action={signOut}>
+                <button className="underline decoration-line underline-offset-4" type="submit">
+                  Log out
+                </button>
+              </form>
+            </>
           ) : (
             <Link className="underline decoration-line underline-offset-4" href="/login">
               Sign in

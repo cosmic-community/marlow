@@ -17,11 +17,14 @@ export function ChatFrame() {
 
   return (
     <div className="space-y-4">
-      <div className="max-w-2xl space-y-2">
-        <h1 className="text-4xl">Ask Leo</h1>
-        <p className="text-ink/75">
-          Leo is the Cosmic support agent. The chat on this page and a request to the agent door are the same agent.
-        </p>
+      <div className="flex max-w-2xl items-center gap-4">
+        <img src="/leo.jpg" alt="" className="h-16 w-16 rounded-full object-cover" />
+        <div className="space-y-2">
+          <h1 className="text-4xl">Ask Leo</h1>
+          <p className="text-ink/75">
+            Leo is Marlow's concierge. The chat on this page and a request to the agent door are the same agent.
+          </p>
+        </div>
       </div>
       {failed ? (
         <p className="rounded-lg border border-line bg-card px-4 py-3 text-sm">

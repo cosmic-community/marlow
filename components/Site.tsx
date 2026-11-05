@@ -21,8 +21,7 @@ export async function SiteHeader() {
           <Link className="underline decoration-line underline-offset-4" href="/trips">
             Your stays
           </Link>
-          <Link className="inline-flex items-center gap-2 underline decoration-line underline-offset-4" href="/chat">
-            <img src="/leo.jpg" alt="" className="h-7 w-7 rounded-full object-cover" />
+          <Link className="underline decoration-line underline-offset-4" href="/chat">
             Ask Leo
           </Link>
           <Link className="underline decoration-line underline-offset-4" href="/test">

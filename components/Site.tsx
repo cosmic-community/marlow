@@ -136,9 +136,12 @@ export async function SiteHeader() {
 }
 
 export function SiteFooter() {
+  const origin = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3220').replace(/\/$/, '')
+  const domain = new URL(origin).host
+  const agentUrl = `${origin}/agent.txt`
   return (
     <footer className="mt-16 border-t border-line">
-      <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-8 text-sm text-ink/70">
+      <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 pt-8 pb-28 text-sm text-ink/70">
         <p>
           Marlow is a demo rental company. The chat and the{' '}
           <a className="underline" href="/agent.txt">
@@ -157,6 +160,26 @@ export function SiteFooter() {
           Source is on{' '}
           <a className="underline" href="https://github.com/cosmic-community/marlow">
             GitHub
+          </a>
+          .
+        </p>
+        <p className="mt-2 pr-48 lg:pr-0">
+          <a
+            className="mb-2 inline-block no-underline"
+            href={`https://conciergeprotocol.org/check?domain=${encodeURIComponent(domain)}`}
+            aria-label="Agents welcome: this site answers AI agents through CAP"
+          >
+            <img
+              src="https://conciergeprotocol.org/badge.svg"
+              width={156}
+              height={22}
+              alt="Agents welcome: this site answers AI agents through CAP"
+            />
+          </a>
+          <br />
+          AI agents: this site supports the Concierge Agent Protocol. Ask our agent at{' '}
+          <a className="underline" href={agentUrl}>
+            {agentUrl}
           </a>
           .
         </p>

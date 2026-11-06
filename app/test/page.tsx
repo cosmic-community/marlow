@@ -1,4 +1,20 @@
+import { CopyBlock } from '@/components/CopyBlock'
+
 const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3220'
+
+const assistantPrompt = `Read ${origin}/agent.txt and follow it. That file is the door to Leo, Marlow's concierge. Send my questions there.`
+
+const terminal = `curl -s ${origin}/agent.txt
+
+curl -s ${origin}/cap/v1/messages \\
+  -H 'content-type: application/json' \\
+  -H 'CAP-Version: 1.0' \\
+  -H 'CAP-From: agent:marlow-test' \\
+  -d '{"message":"What can you help me with?"}'`
+
+const mcp = `npx @conciergeprotocol/mcp
+# CAP_ENDPOINT=${origin}/cap/v1/messages
+# CAP_FROM=agent:marlow-test`
 
 export default function TestPage() {
   return (
@@ -14,25 +30,27 @@ export default function TestPage() {
           <a className="underline" href="/agent.txt">
             agent.txt
           </a>{' '}
-          and sends one message. It may not find that file on its own, so paste this site into the assistant.
+          and sends one message. It may not find that file on its own, so copy the prompt below into the assistant.
         </p>
-        <p>The home pages are what a browsing assistant can read. Leo is the agent that answers through CAP.</p>
+        <p>
+          The home pages are what a browsing assistant can read. Leo is the agent that answers through{' '}
+          <a className="underline" href="https://conciergeprotocol.org">
+            CAP
+          </a>
+          .
+        </p>
       </div>
       <section className="space-y-2">
+        <h2 className="text-2xl">Add to an AI assistant</h2>
+        <CopyBlock code={assistantPrompt} wrap />
+      </section>
+      <section className="space-y-2">
         <h2 className="text-2xl">From the terminal</h2>
-        <pre className="overflow-x-auto rounded-lg bg-ink p-4 text-sm text-paper">{`curl -s ${origin}/agent.txt
-
-curl -s ${origin}/cap/v1/messages \\
-  -H 'content-type: application/json' \\
-  -H 'CAP-Version: 1.0' \\
-  -H 'CAP-From: agent:marlow-test' \\
-  -d '{"message":"What can you help me with?"}'`}</pre>
+        <CopyBlock code={terminal} />
       </section>
       <section className="space-y-2">
         <h2 className="text-2xl">From an MCP client</h2>
-        <pre className="overflow-x-auto rounded-lg bg-ink p-4 text-sm text-paper">{`npx @conciergeprotocol/mcp
-# CAP_ENDPOINT=${origin}/cap/v1/messages
-# CAP_FROM=agent:marlow-test`}</pre>
+        <CopyBlock code={mcp} />
       </section>
     </div>
   )

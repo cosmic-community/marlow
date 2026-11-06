@@ -12,7 +12,8 @@ async function load(url: string) {
   try {
     const response = await fetch(url, { cache: 'force-cache' })
     if (!response.ok) return null
-    return await response.arrayBuffer()
+    const type = response.headers.get('content-type')?.split(';')[0] || 'application/octet-stream'
+    return { data: await response.arrayBuffer(), type }
   } catch {
     return null
   }
@@ -21,9 +22,10 @@ async function load(url: string) {
 export default async function Image() {
   const [regular, bold, photo] = await Promise.all([load(regularFont), load(boldFont), load(housePhoto)])
   const fonts = [
-    regular ? { name: 'Libre Baskerville', data: regular, weight: 400 as const, style: 'normal' as const } : null,
-    bold ? { name: 'Libre Baskerville', data: bold, weight: 700 as const, style: 'normal' as const } : null,
+    regular ? { name: 'Libre Baskerville', data: regular.data, weight: 400 as const, style: 'normal' as const } : null,
+    bold ? { name: 'Libre Baskerville', data: bold.data, weight: 700 as const, style: 'normal' as const } : null,
   ].filter((font) => font !== null)
+  const photoSrc = photo ? `data:${photo.type};base64,${Buffer.from(photo.data).toString('base64')}` : null
 
   return new ImageResponse(
     (
@@ -61,8 +63,8 @@ export default async function Image() {
             </div>
           </div>
         </div>
-        {photo ? (
-          <img src={photo} width={520} height={630} alt="" style={{ width: 520, height: 630, objectFit: 'cover' }} />
+        {photoSrc ? (
+          <img src={photoSrc} width={520} height={630} alt="" style={{ width: 520, height: 630, objectFit: 'cover' }} />
         ) : (
           <div style={{ width: 520, height: 630, background: '#6e2b3c' }} />
         )}

@@ -1,6 +1,6 @@
 # Marlow
 
-Vacation rentals in Sonoma County, with a door for AI agents.
+A demo vacation-rental site in Sonoma County, with a door for AI agents. Bookings and payments are simulated.
 
 [Live site](https://marlow.cosmic.site) · [Ask Leo](https://marlow.cosmic.site/chat) · [Check the door](https://conciergeprotocol.org/check)
 

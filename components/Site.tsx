@@ -163,7 +163,7 @@ export function SiteFooter() {
           </a>
           .
         </p>
-        <p className="mt-2 pr-48 lg:pr-0">
+        <p className="mt-2">
           <a
             className="mb-2 inline-block no-underline"
             href={`https://conciergeprotocol.org/check?domain=${encodeURIComponent(domain)}`}

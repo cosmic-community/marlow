@@ -30,6 +30,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="agent" href={`${siteUrl}/agent.txt`} />
+      </head>
       <body className="min-h-screen">
         <SiteHeader />
         <main className="mx-auto max-w-6xl px-5 py-8">{children}</main>

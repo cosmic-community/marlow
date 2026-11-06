@@ -30,7 +30,7 @@ export default function TestPage() {
           <a className="underline" href="/agent.txt">
             agent.txt
           </a>{' '}
-          and sends one message. It does not find that file on its own, so copy the prompt below into the assistant.
+          and sends one message. It may not find that file on its own, so copy the prompt below into the assistant.
         </p>
         <p>
           The home pages are what a browsing assistant can read. Leo is the agent that answers through{' '}

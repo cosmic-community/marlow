@@ -6,7 +6,7 @@ export const contentType = 'image/png'
 
 const regularFont = 'https://fonts.gstatic.com/s/librebaskerville/v24/kmKUZrc3Hgbbcjq75U4uslyuy4kn0olVQ-LglH6T17uj8Q4SCQ.ttf'
 const boldFont = 'https://fonts.gstatic.com/s/librebaskerville/v24/kmKUZrc3Hgbbcjq75U4uslyuy4kn0olVQ-LglH6T17ujFgkSCQ.ttf'
-const housePhoto = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=900&h=1260&q=80'
+const housePhoto = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?fm=jpg&fit=crop&w=900&h=1260&q=80'
 
 async function load(url: string) {
   try {
@@ -24,6 +24,8 @@ export default async function Image() {
     regular ? { name: 'Libre Baskerville', data: regular, weight: 400 as const, style: 'normal' as const } : null,
     bold ? { name: 'Libre Baskerville', data: bold, weight: 700 as const, style: 'normal' as const } : null,
   ].filter((font) => font !== null)
+  // <img src> must be a string: encode the fetched bytes as a JPEG data URL.
+  const photoSrc = photo ? `data:image/jpeg;base64,${Buffer.from(photo).toString('base64')}` : null
 
   return new ImageResponse(
     (
@@ -61,8 +63,8 @@ export default async function Image() {
             </div>
           </div>
         </div>
-        {photo ? (
-          <img src={photo} width={520} height={630} alt="" style={{ width: 520, height: 630, objectFit: 'cover' }} />
+        {photoSrc ? (
+          <img src={photoSrc} width={520} height={630} alt="" style={{ width: 520, height: 630, objectFit: 'cover' }} />
         ) : (
           <div style={{ width: 520, height: 630, background: '#6e2b3c' }} />
         )}

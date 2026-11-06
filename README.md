@@ -2,13 +2,15 @@
 
 A demo vacation-rental site in Sonoma County, with a door for AI agents. Bookings and payments are simulated.
 
-[Live site](https://marlow.cosmic.site) · [Ask Leo](https://marlow.cosmic.site/chat) · [Check the door](https://conciergeprotocol.org/check)
+[Live site](https://marlow.cosmic.site) · [Ask Leo](https://marlow.cosmic.site/chat) · [Check the door](https://conciergeprotocol.org/check?domain=https://marlow.cosmic.site/)
 
 <p align="center">
   <img src="docs/marlow.png" alt="The Marlow homepage with Leo open, offering stays in Sonoma County" width="720">
 </p>
 
 Homes, guests, and stays are Cosmic objects. Leo is the Cosmic support agent. A person in the chat and a visiting agent at the door reach the same agent. Login is what lets Leo read one guest's reservation. Arrival instructions are stored on the stay, not on the public home.
+
+All content and AI support context is powered by [Cosmic](https://www.cosmicjs.com/community/projects/marlow).
 
 ## Try it
 
@@ -69,7 +71,7 @@ A question about "my stay" returns `login_required`. The visiting agent starts t
 
 A catalog question that names dates, guests, bedrooms, a hot tub, dogs, or a budget is answered from the homes on this site, with a link to each house. Other public questions are sent to Leo. If Leo does not answer, that same search is the fallback.
 
-Check a deployed door at [conciergeprotocol.org/check](https://conciergeprotocol.org/check). The same steps are on [/test](https://marlow.cosmic.site/test).
+Check a deployed door at [conciergeprotocol.org/check](https://conciergeprotocol.org/check?domain=https://marlow.cosmic.site/). The same steps are on [/test](https://marlow.cosmic.site/test).
 
 With the bucket keys set, the door stores logins, tokens, messages, and approvals as `cap-records` objects in Cosmic, so it runs on serverless hosting. Without them it uses `data/cap.sqlite`.
 

@@ -4,7 +4,7 @@
     "": {
       "name": "marlow",
       "dependencies": {
-        "@conciergeprotocol/server": "^0.4.0",
+        "@conciergeprotocol/server": "^0.5.0",
         "next": "16.3.5",
         "react": "19.3.0",
         "react-dom": "19.3.0",
@@ -22,7 +22,7 @@
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.3.0", "", {}, "sha512-U4+70Pc5ZS9osnCBCE5Jha/ciHM+Yp+CNMNC/7HvYbNRk1Ldd+f7qO65W5qfhu/TCv+/ozljlXXe9Nj8419DMA=="],
 
-    "@conciergeprotocol/server": ["@conciergeprotocol/server@0.4.0", "", { "optionalDependencies": { "pg": "^8.16.0" }, "bin": { "cap-check": "src/check.js", "cap-server": "src/cli.js" } }, "sha512-ic5GBBdYEFpEtHKpxP3DlEUTZYw/urCRiuZKgyb4lijJES0Y5jXOXjpi/En4dD38UAX4WWIYKO4TWEdBpcHXUQ=="],
+    "@conciergeprotocol/server": ["@conciergeprotocol/server@0.5.0", "", { "optionalDependencies": { "pg": "^8.16.0" }, "bin": { "cap-check": "src/check.js", "cap-server": "src/cli.js" } }, "sha512-VyAJawzLHVONrqST7+e9izM/evuotqoeRRp0cpUrzm261PB5l7O0muyFxQ+YuIWl6p/EqqUqxRIPCouV1zXT8A=="],
 
     "@emnapi/runtime": ["@emnapi/runtime@1.11.3", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA=="],
 

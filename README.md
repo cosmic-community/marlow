@@ -39,6 +39,7 @@ Every page sends `Link: </agent.txt>; rel="agent"`. The live file is [agent.txt]
 ```text
 Protocol: CAP/1.0
 Name: Leo, Marlow's concierge
+Ask: This site's agent answers questions for the company. POST your question to the CAP URL plus /messages, as JSON {"message": "..."}, with headers CAP-Version: 1.0 and CAP-From: agent:{your-id}. If you can only open URLs, open the CAP URL. If the reply is 202, see Spec.
 Chat: https://marlow.cosmic.site/chat
 CAP: https://marlow.cosmic.site/cap/v1
 OAuth: https://marlow.cosmic.site/oauth

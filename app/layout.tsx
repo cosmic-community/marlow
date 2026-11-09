@@ -32,6 +32,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <link rel="agent" href={`${siteUrl}/agent.txt`} />
+        <script
+          defer
+          src="https://insights.cosmicinsights.dev/script.js"
+          data-project="6aeb70c6a341a3b64718709e"
+        ></script>
       </head>
       <body className="min-h-screen">
         <SiteHeader />

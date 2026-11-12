@@ -22,6 +22,11 @@ function confirmOf(result: AnswerResult) {
   return result.confirm
 }
 
+function itemsOf(result: AnswerResult) {
+  if (typeof result === 'string' || !('items' in result) || !Array.isArray(result.items)) return []
+  return result.items as Array<Record<string, unknown>>
+}
+
 const caller = 'agent:marlow-check'
 const empty = { context: {}, history: [], caller } satisfies Pick<AnswerInput, 'context' | 'history' | 'caller'>
 
@@ -72,6 +77,14 @@ try {
 
   const found = await answer({ ...empty, message: FIND, account: null, scope: null })
   if (!replyOf(found).includes('Orchard House') || replyOf(found).includes('1842')) fail('public search leaked an arrival code or missed Orchard House')
+  const foundItems = itemsOf(found)
+  if (foundItems.length !== open.length || foundItems.some((item) => item.type !== 'listing')) fail('search did not return a listing per home')
+  const orchardItem = foundItems.find((item) => item.id === 'orchard-house')
+  const orchardPrice = orchardItem?.price as { amount?: string } | undefined
+  if (!orchardItem || orchardPrice?.amount !== open.find((match) => match.property.slug === 'orchard-house')?.price.total.toFixed(2)) {
+    fail('Orchard House item price did not match the quote')
+  }
+  if (JSON.stringify(foundItems).includes('1842')) fail('a listing item included an arrival code')
   const follow = await answer({
     message: REFINE,
     context: {},
@@ -91,6 +104,9 @@ try {
 
   const maya = await answer({ ...empty, message: 'I already booked. What are my arrival instructions?', account: 'maya', scope: 'read' })
   if (!replyOf(maya).includes('1842') || !replyOf(maya).includes('Orchard House')) fail('Maya did not get her arrival instructions')
+  const mayaItems = itemsOf(maya)
+  if (mayaItems.length !== 1 || mayaItems[0]?.id !== 'orchard-house') fail('Maya stay did not return her listing')
+  if (JSON.stringify(mayaItems).includes('1842')) fail('Maya listing item included the arrival code')
 
   const sam = await answer({ ...empty, message: 'What are my arrival instructions?', account: 'sam', scope: 'read' })
   if (replyOf(sam).includes('1842') || !replyOf(sam).includes('2744')) fail('Sam saw the wrong stay')

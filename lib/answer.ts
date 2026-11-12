@@ -13,6 +13,7 @@ import {
 } from './bookings'
 import { formatDate, isoFromOffset, offsetFromIso } from './dates'
 import { ensureGuests, guestById, verifyGuest } from './guests'
+import { listingItem, withItems } from './items'
 import { askLeo } from './leo'
 import { money } from './money'
 import { cancellationText, propertyBySlug } from './properties'
@@ -73,13 +74,17 @@ async function searchReply(texts: string[]) {
   if (!matches.length) {
     return `Nothing is open for ${describe(filters)} in Sonoma County. The total includes cleaning, a 12% service fee, and 14% tax.`
   }
-  const lines = matches.slice(0, 8).map((match) => {
+  const shown = matches.slice(0, 8)
+  const lines = shown.map((match) => {
     const href = `${origin()}/stay/${match.property.slug}?checkIn=${isoFromOffset(match.start)}&nights=${match.nights}`
     const pet = match.price.pet ? `, ${money(match.price.pet)} pet` : ''
     return `- ${match.property.name}, ${match.property.town}. Sleeps ${match.property.sleeps}. ${match.property.hotTub ? 'Hot tub. ' : ''}${match.property.dogs ? 'Dogs allowed. ' : 'No dogs. '}${cancellationText(match.property.cancellation)} ${formatDate(match.start)} to ${formatDate(match.start + match.nights)}, ${money(match.price.total)} total (${money(match.price.lodging)} lodging, ${money(match.price.cleaning)} cleaning${pet}, ${money(match.price.service)} service, ${money(match.price.tax)} tax). ${href}`
   })
   const more = matches.length > 8 ? ` ${matches.length - 8} more are open.` : ''
-  return `For ${describe(filters)} in Sonoma County, ${matches.length === 1 ? 'this home is open' : `these ${matches.length} homes are open`}.${more}\n${lines.join('\n')}`
+  const reply = `For ${describe(filters)} in Sonoma County, ${matches.length === 1 ? 'this home is open' : `these ${matches.length} homes are open`}.${more}\n${lines.join('\n')}`
+  const pets = Boolean(filters.dogs)
+  const items = shown.map((match, index) => listingItem({ ...match, pets, ref: index + 1, origin: origin() }))
+  return withItems(reply, items)
 }
 
 async function stayReply(account: string) {
@@ -91,7 +96,17 @@ async function stayReply(account: string) {
   const quote = quoteStay(property, booking.nights, booking.pets, booking.lateCheckout)
   const late = booking.lateCheckout ? ` Noon checkout is on the stay, for ${money(property.lateCheckoutFee)}.` : ''
   const arrival = booking.arrival || property.arrival
-  return `${guest?.name || 'This guest'} is booked at ${property.name} in ${property.town}, ${formatDate(booking.checkInOffset)} to ${formatDate(booking.checkInOffset + booking.nights)}. Check-in is ${property.checkIn}. Check-out is ${property.checkOut}. The total is ${money(quote.total)}.${late} Arrival: ${arrival} ${origin()}/trips/${booking.id}`
+  const reply = `${guest?.name || 'This guest'} is booked at ${property.name} in ${property.town}, ${formatDate(booking.checkInOffset)} to ${formatDate(booking.checkInOffset + booking.nights)}. Check-in is ${property.checkIn}. Check-out is ${property.checkOut}. The total is ${money(quote.total)}.${late} Arrival: ${arrival} ${origin()}/trips/${booking.id}`
+  // The arrival code stays in the reply. The item is the public listing.
+  return withItems(reply, [listingItem({
+    property,
+    start: booking.checkInOffset,
+    nights: booking.nights,
+    price: quote,
+    pets: booking.pets,
+    ref: 1,
+    origin: origin(),
+  })])
 }
 
 export async function answer({ message, history, account, scope }: AnswerInput): Promise<AnswerResult> {
@@ -144,7 +159,7 @@ export async function answer({ message, history, account, scope }: AnswerInput):
     }
   }
 
-  if (kind === 'account') return { reply: await stayReply(account as string) }
+  if (kind === 'account') return stayReply(account as string)
 
   if (kind === 'book') {
     if (scope !== 'write') return writeRequired
@@ -169,10 +184,10 @@ export async function answer({ message, history, account, scope }: AnswerInput):
   }
 
   const texts = [...history.map((turn) => turn.message), message]
-  if (isStaySearch(message)) return { reply: await searchReply(texts) }
+  if (isStaySearch(message)) return searchReply(texts)
   const leo = await askLeo(history, message)
   if (leo) return { reply: leo }
-  return { reply: await searchReply(texts) }
+  return searchReply(texts)
 }
 
 export async function act({

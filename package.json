@@ -10,7 +10,7 @@
     "reset": "bun scripts/reset.ts"
   },
   "dependencies": {
-    "@conciergeprotocol/server": "^0.5.0",
+    "@conciergeprotocol/server": "^0.6.0",
     "next": "16.3.5",
     "react": "19.3.0",
     "react-dom": "19.3.0"

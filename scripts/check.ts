@@ -28,7 +28,7 @@ function itemsOf(result: AnswerResult) {
 }
 
 const caller = 'agent:marlow-check'
-const empty = { context: {}, history: [], caller } satisfies Pick<AnswerInput, 'context' | 'history' | 'caller'>
+const empty = { context: {}, history: [], caller, accept: ['items'] } satisfies Pick<AnswerInput, 'context' | 'history' | 'caller' | 'accept'>
 
 const FIND = 'We are four people visiting Sonoma for three nights. We need two bedrooms, a hot tub, and a total under $1,200.'
 const REFINE = 'Which of those allows a dog and has free cancellation?'
@@ -89,6 +89,7 @@ try {
     message: REFINE,
     context: {},
     caller,
+    accept: ['items'],
     account: null,
     scope: null,
     history: [{ message: FIND, context: {}, reply: replyOf(found) }],

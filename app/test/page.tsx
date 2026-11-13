@@ -10,7 +10,7 @@ curl -s ${origin}/cap/v1/messages \\
   -H 'content-type: application/json' \\
   -H 'CAP-Version: 1.0' \\
   -H 'CAP-From: agent:marlow-test' \\
-  -d '{"message":"What can you help me with?"}'`
+  -d '{"message":"What can you help me with?","accept":["items"]}'`
 
 const mcp = `npx @conciergeprotocol/mcp
 # CAP_ENDPOINT=${origin}/cap/v1/messages

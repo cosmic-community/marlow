@@ -39,14 +39,14 @@ Every page sends `Link: </agent.txt>; rel="agent"`. The live file is [agent.txt]
 ```text
 Protocol: CAP/1.0
 Name: Leo, Marlow's concierge
-Ask: This site's agent answers questions for the company. POST your question to the CAP URL plus /messages, as JSON {"message": "..."}, with headers CAP-Version: 1.0 and CAP-From: agent:{your-id}. If you can only open URLs, open the CAP URL. If the reply is 202, see Spec.
+Ask: This site's agent answers questions for the company. POST your question to the CAP URL plus /messages, as JSON {"message": "...", "accept": ["items"]}, with headers CAP-Version: 1.0 and CAP-From: agent:{your-id}. If you can only open URLs, open the CAP URL. If the reply is 202, see Spec.
 Chat: https://marlow.cosmic.site/chat
 CAP: https://marlow.cosmic.site/cap/v1
 OAuth: https://marlow.cosmic.site/oauth
 Spec: https://conciergeprotocol.org/cap.txt
 ```
 
-`Chat` is the page a person uses. `CAP` is where another agent posts. `OAuth` is the device login for account questions. [llms.txt](https://marlow.cosmic.site/llms.txt) lists the public pages. The door is separate from that list.
+`Chat` is the page a person uses. `CAP` is where another agent posts. `OAuth` is the device login for account questions. `"accept": ["items"]` also returns a typed listing for each home. The reply is complete without it. [llms.txt](https://marlow.cosmic.site/llms.txt) lists the public pages. The door is separate from that list.
 
 ```bash
 curl -s https://marlow.cosmic.site/agent.txt
@@ -55,7 +55,7 @@ curl -s https://marlow.cosmic.site/cap/v1/messages \
   -H 'content-type: application/json' \
   -H 'CAP-Version: 1.0' \
   -H 'CAP-From: agent:marlow-test' \
-  -d '{"message":"What can you help me with?"}'
+  -d '{"message":"What can you help me with?","accept":["items"]}'
 ```
 
 `CAP-Version` and `CAP-From` are required. A reply that is still running returns `202` with `Retry-After`. Poll `GET /cap/v1/messages/{id}` until `status` is `done`.

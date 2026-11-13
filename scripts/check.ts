@@ -27,6 +27,10 @@ function itemsOf(result: AnswerResult) {
   return result.items as Array<Record<string, unknown>>
 }
 
+const { withAcceptItems } = await import('../lib/agent-card')
+const card = withAcceptItems('Ask: POST as JSON {"message": "..."}\n')
+if (!card.includes('{"message": "...", "accept": ["items"]}')) fail('agent.txt example does not ask for items')
+
 const caller = 'agent:marlow-check'
 const empty = { context: {}, history: [], caller, accept: ['items'] } satisfies Pick<AnswerInput, 'context' | 'history' | 'caller' | 'accept'>
 

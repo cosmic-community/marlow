@@ -6,6 +6,9 @@ Vacation rentals in Sonoma County. Public home pages list dates, amenities, fees
 
 - Stays: ${origin}/stays
 - A home: ${origin}/stay/{slug}
+- Every home with its nightly rate and open dates, as JSON: ${origin}/products.json
+- Cancellation policy: ${origin}/cancellation-policy
+- House rules: ${origin}/house-rules
 - Guest stays: ${origin}/trips
 - Agent card: ${origin}/agent.txt
 `

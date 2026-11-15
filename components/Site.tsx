@@ -157,6 +157,15 @@ export function SiteFooter() {
           . Payments are simulated.
         </p>
         <p>
+          <a className="underline" href="/cancellation-policy">
+            Cancellation policy
+          </a>{' '}
+          ·{' '}
+          <a className="underline" href="/house-rules">
+            House rules
+          </a>
+        </p>
+        <p>
           Source is on{' '}
           <a className="underline" href="https://github.com/cosmic-community/marlow">
             GitHub

@@ -1,7 +1,7 @@
 import { Calendar } from '@/components/Calendar'
 import { QuoteTable } from '@/components/QuoteTable'
 import { reserve } from '@/app/actions'
-import { ensureBookings, windowOpen } from '@/lib/bookings'
+import { ensureBookings, firstWindow, windowOpen } from '@/lib/bookings'
 import { formatDate, isoFromOffset, offsetFromIso } from '@/lib/dates'
 import { money } from '@/lib/money'
 import { cancellationText, PHOTO_CREDIT, PHOTO_CREDIT_URL, propertyBySlug } from '@/lib/properties'
@@ -32,8 +32,36 @@ export default async function StayPage({
   const error = one(raw.error)
   const open = windowOpen(property, checkIn, nights)
   const quote = quoteStay(property, nights, pets)
+  const listing = {
+    '@context': 'https://schema.org',
+    '@type': 'VacationRental',
+    identifier: property.slug,
+    name: property.name,
+    description: property.summary,
+    url: `/stay/${property.slug}`,
+    image: property.photos,
+    address: { '@type': 'PostalAddress', addressLocality: property.town, addressRegion: 'CA', addressCountry: 'US' },
+    containsPlace: {
+      '@type': 'Accommodation',
+      additionalType: 'EntirePlace',
+      numberOfBedrooms: property.bedrooms,
+      numberOfBathroomsTotal: property.bathrooms,
+      occupancy: { '@type': 'QuantitativeValue', maxValue: property.sleeps },
+      petsAllowed: property.dogs,
+      amenityFeature: [{ '@type': 'LocationFeatureSpecification', name: 'Hot tub', value: property.hotTub }],
+    },
+    offers: {
+      '@type': 'Offer',
+      price: property.nightly.toFixed(2),
+      priceCurrency: 'USD',
+      unitText: 'night',
+      availability: firstWindow(property, 2, 1, 90) == null ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
+      url: `/stay/${property.slug}`,
+    },
+  }
   return (
     <article className="grid gap-10 lg:grid-cols-[1.4fr_0.8fr]">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(listing).replace(/</g, '\\u003c') }} />
       <div className="space-y-6">
         <p className="text-sm uppercase tracking-wide text-ink/60">{property.town}</p>
         <h1 className="text-5xl">{property.name}</h1>
@@ -60,7 +88,16 @@ export default async function StayPage({
               : 'Noon checkout is not offered'}
           </li>
         </ul>
-        <p className="text-sm">{cancellationText(property.cancellation)}</p>
+        <p className="text-sm">
+          {cancellationText(property.cancellation)}{' '}
+          <a className="underline" href="/cancellation-policy">
+            Cancellation policy
+          </a>{' '}
+          ·{' '}
+          <a className="underline" href="/house-rules">
+            House rules
+          </a>
+        </p>
         <Calendar slug={property.slug} />
       </div>
       <aside className="h-fit space-y-4 rounded-lg border border-line bg-card p-5">
